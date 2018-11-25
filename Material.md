@@ -37,7 +37,28 @@
 >* π‚’’≤Œ ˝
 
 ``` C++
+// the light input
 
+mat3 PhongLight = mat3( 0.2,  0.2,  0.2,  // ambient
+                    0.8,  0.8, 0.8,      // diffuse
+                    1.0, 1.0, 1.0 );    // specular
+#define P_ambient  0
+#define P_diffuse  1
+#define P_specular 2
+    
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    // Normalized pixel coordinates (from 0 to 1)
+    vec2 uv = fragCoord/iResolution.xy;
+
+    // Time varying pixel color
+    vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
+    
+    col = PhongLight[P_specular];
+    
+    // Output to screen
+    fragColor = vec4(col,1.0);
+}
 
 ```
 
