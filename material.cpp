@@ -1,80 +1,3 @@
-﻿# 材质
-
-### 知识回顾
-在纹理这一课中，我们学习了关于纹理贴图如何使用的方法
-
->* 将纹理坐标的信息存储到VAO中
-
-![纹理坐标](图片/纹理坐标.png)
-
-如此，正方形的4个顶点分别对应着
-
-![纹理坐标解释](图片/纹理坐标解释.png)
-
->* 在像素着色器中使用 texture 函数采样
-
-![采样函数](图片/采样函数.png)
-
-如此，便将一张图片附着在正方形上。
-
-### 材质定义
-以对光的描述来定义材质，这也是冯氏光照模型的特点。
-
-![材质定义](图片/材质定义.png)
-
-其中
-
->* **ambient**   : 环境光，是一个非常的小的亮度，单纯的环境光的效果相当于，在昏暗的环境中的大致颜色。
->* **diffuse**   : 漫反射，基础色，主要表现的颜色。
->* **specular**  : 高光点。
->* **shininess** : 高光参数。
-
-所谓材质，即这一套在实际上的表现。
-
-### 参数调整
-首先我们在 [shadertoy](https://www.shadertoy.com/) 上看看用教程上的例子的效果:
-
->* 光照参数
-
-``` C++
-mat3 PhongLight = mat3( 0.2,  0.2,  0.2,	// ambient
-					0.8,  0.8, 0.8,			// diffuse
-					1.0, 1.0, 1.0 );		// specular
-vec3 LightPos = vec3(10.0, 10.0, 10.0);
-```
->* 材质参数
-``` C++
-mat3 CuMaterial = mat3( 1.0,  0.5,  0.31,	// ambient
-					1.0,  0.5,  0.31,		// diffuse
-					0.5, 0.5, 0.5);			// specular
-#define Cu_shininess 32.0
-```
->* 对应的渲染流程
-``` C++
-		// Phong Light
-		
-		// ambient
-		vec3 ambient = PhongLight[P_ambient] * CuMaterial[P_ambient];
-
-		// diffuse
-		if (nor != vec3(0.0, 1.0, 0.0)) nor = normalize(pos - sphere_center);
-		vec3 lightDir = normalize(LightPos - pos);
-		float diff = max(dot(nor, lightDir), 0.0);
-		vec3 diffuse = PhongLight[P_diffuse] * (diff * CuMaterial[P_diffuse]);
-
-		// Specular
-		vec3 viewDir = normalize(eye - pos);
-		vec3 reflectDir = reflect(-lightDir, nor);
-		float spec = pow(max(dot(viewDir, reflectDir), 0.0), Cu_shininess);
-		vec3 specular = PhongLight[P_specular] * (spec * CuMaterial[P_specular]);
-
-		vec3 result = ambient + diffuse + specular;
-```
->* 结果
-![Phong结果](图片/phong结果.png)
-
->* 附上全部代码，并在 [shadertoy](https://www.shadertoy.com/) 做些修改。
-``` C++
 // the light input
 
 mat3 PhongLight = mat3( 0.2,  0.2,  0.2,	// ambient
@@ -187,7 +110,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 	// fragColor = vec4(vec3(occ), 1.0);
 	fragColor = vec4(col, 1.0);
 }
-```
 
 
 
+	
