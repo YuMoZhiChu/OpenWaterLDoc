@@ -71,6 +71,7 @@ mat3 CuMaterial = mat3( 1.0,  0.5,  0.31,	// ambient
 		vec3 result = ambient + diffuse + specular;
 ```
 >* 结果
+
 ![Phong结果](图片/phong结果.png)
 
 >* 附上全部代码，并在 [shadertoy](https://www.shadertoy.com/) 做些修改。
@@ -189,5 +190,34 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 }
 ```
 
+### 加上纹理采样
+
+我们在很多地方都可以使用纹理，来使得图像更加生动。
+
+在这里，我们做一些简单的采样工作
+
+>* 对地面进行 uv 坐标的设计
+因为这是一个矩形的地面，所以我们不考虑 y 轴的变化。
+
+```
+CuMaterialDiffuse = texture(iChannel0, pos.xz/2.0).xyz;
+...
+vec3 diffuse = PhongLight[P_diffuse] * (diff * CuMaterialDiffuse);
+```
+我们就用贴图 **iChannel0** 代替了原来的纯色 1.0,  0.5,  0.31
+
+>* 对球体进行 uv 坐标的设计
+我在这里设计的比较简单，用 z 轴 + y 轴处理
+```
+CuMaterialDiffuse = texture(iChannel0, vec2(pos.z, pos.y/2.0)).xyz;
+...
+vec3 diffuse = PhongLight[P_diffuse] * (diff * CuMaterialDiffuse);
+```
+
+>* 看看效果
+
+![Phong 贴图](图片/phong_贴图.png)
+
+在这里可以多换几张纹理看看合不合适。
 
 

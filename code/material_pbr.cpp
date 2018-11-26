@@ -14,6 +14,8 @@ mat3 CuMaterial = mat3( 1.0,  0.5,  0.31,	// ambient
 
 #define Cu_shininess 32.0
 
+#define PI 3.14159265359
+
 vec3 LightPos = vec3(10.0, 10.0, 10.0);
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
@@ -88,7 +90,14 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 		vec3 ambient = PhongLight[P_ambient] * CuMaterial[P_ambient];
 
 		// diffuse
-		if (nor != vec3(0.0, 1.0, 0.0)) nor = normalize(pos - sphere_center);
+		vec3 CuMaterialDiffuse = vec3(0.0);
+		if (nor != vec3(0.0, 1.0, 0.0))
+		{
+			nor = normalize(pos - sphere_center);
+			CuMaterialDiffuse = texture(iChannel0, vec2(pos.x, pos.y/2.0)).xyz;
+		} else {
+			CuMaterialDiffuse = texture(iChannel0, pos.xz).xyz;
+		}
 		vec3 lightDir = normalize(LightPos - pos);
 		float diff = max(dot(nor, lightDir), 0.0);
 		vec3 diffuse = PhongLight[P_diffuse] * (diff * CuMaterial[P_diffuse]);
@@ -102,7 +111,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 		vec3 result = ambient + diffuse + specular;
 
 
-		col = result * occ;
+		col = CuMaterialDiffuse;//result * occ;
 	}
 
 
