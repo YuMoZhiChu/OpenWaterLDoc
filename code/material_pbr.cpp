@@ -39,7 +39,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
 
 	// raytrace
-	float tmin = 10000.0;
+	float tmin = 100.0;
 	vec3  nor = vec3(0.0);
 	float occ = 1.0;
 	vec3  pos = vec3(0.0);
@@ -80,7 +80,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 	// background color
 	vec3 col = vec3(0.8);
 	// shading/lighting	
-	if (tmin < 10000.0)
+	if (tmin < 10.0)
 	{
 		pos = eye + tmin*view_ray;
 
@@ -94,13 +94,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 		if (nor != vec3(0.0, 1.0, 0.0))
 		{
 			nor = normalize(pos - sphere_center);
-			CuMaterialDiffuse = texture(iChannel0, vec2(pos.x, pos.y/2.0)).xyz;
+			CuMaterialDiffuse = texture(iChannel0, vec2(pos.z, pos.y/2.0)).xyz;
 		} else {
-			CuMaterialDiffuse = texture(iChannel0, pos.xz).xyz;
+			CuMaterialDiffuse = texture(iChannel0, pos.xz/2.0).xyz;
 		}
 		vec3 lightDir = normalize(LightPos - pos);
 		float diff = max(dot(nor, lightDir), 0.0);
-		vec3 diffuse = PhongLight[P_diffuse] * (diff * CuMaterial[P_diffuse]);
+		vec3 diffuse = PhongLight[P_diffuse] * (diff * CuMaterialDiffuse);
 
 		// Specular
 		vec3 viewDir = normalize(eye - pos);
@@ -111,7 +111,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 		vec3 result = ambient + diffuse + specular;
 
 
-		col = CuMaterialDiffuse;//result * occ;
+		col = result * occ;
 	}
 
 
